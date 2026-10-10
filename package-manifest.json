@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "version": "1.1.0",
+  "files": {
+    ".gitattributes": "6eec318cfb2fcb95c786d912bb364afa6b6c307b916d82b19ca9f3d1b8e97bee",
+    ".github/workflows/validate.yml": "3757945ca3030d0446beb3f6d8e6a2ad39e8e40f11f13d7047d1218a6f34a992",
+    ".gitignore": "a02daff5fd794d2430f24d1365a05cf2e933f8262ef89b66d393e9c9ab3fc6e4",
+    "council/agents/openai.yaml": "df7a15883df9a84fda03c41fc6d1eaaac61fdc6d1fd62799127378381cadfd8e",
+    "council/assets/luna-worker.toml": "a2792552ea91cabb830f3fcc46c68b5bdd211e8acf992622e2d0bfb49750f434",
+    "council/references/council-evaluation.md": "287abcafe9d132594ccc7812091f93dcd1c4c86c1f1b43c70c962dbc43a38ef6",
+    "council/references/council-recipes.md": "654f3c44c38f01d32dca08926a445548469b96baee0c00e1826a879fea4c2231",
+    "council/SKILL.md": "1527cbf62be90f3fe8cf0e8acef1c9df32184737444b7fac2daf2472645bf89d",
+    "docs/images/assets/openai.svg": "a41e8e53b14ef686319ed1529066d6a3391aca77d7f6eaaa9f0783acc717375f",
+    "docs/images/assets/OPENAI_COOKBOOK_LICENSE": "13df7812ca53ecaae1cb4a868844bb598373047ae1d580e4debfbef1dd5b6915",
+    "docs/images/council-flow.graph.json": "564895cfcbe9149a7460eb65a4c765869af47d6e0ec502ca8c7dd875ccdccb36",
+    "docs/images/council-flow.png": "5935536b62c69b15c1a2d5fd0d163d022e4b24132aab11d7115c733a6fd6db99",
+    "docs/images/council-flow.svg": "1f13089ad3ade73cd423e45683c215f700fd5524a54bf0b27b93512ebfd22c86",
+    "docs/images/logo-assets.json": "2e645b52fb8548c2340cefb108d44c1aa9149d55cbf3bb3e84abd156af16b4ad",
+    "LICENSE": "99f4bd3ae72079beb27335101dbdc0b195dce89f492ab6f0e00dc7a589b0ca2d",
+    "README.en.md": "2043bf212319da121d8834b1271451879cff137eea68afb7df1ea74b7cdf84e7",
+    "README.md": "10d442e005e99e1289d69af853cd1959837ae34546c85f1dfa76ab17e1a20a01",
+    "scripts/build_release.py": "2065011897c7c9aeab9600a077f5144fb240d504ce6375b45306e9d7b0eb52b6",
+    "scripts/install.py": "6f516f62efaf2cd8d79f0a69e77dc263c7ef3ebbda28f01c6217be574c9a8fd9",
+    "scripts/render_diagram.py": "4c60c2a8ef54bdb508985df8c09ecf1462cd2d77a048aaafd9b13a8805a0d61f",
+    "scripts/update_manifest.py": "dd6577bb1d8517652de6a2b340499dd62929082febbd200c71fd7f6fff2cfe95",
+    "scripts/validate_package.py": "02d34afee88dfabba9bfa4560b8923a35d056047c18cf2fd6ba56753a46255e5",
+    "tests/test_install.py": "6636f7ae6299444212fdd7499de9dbe3e5f198d3028cb62d7ff5127d4401495e",
+    "THIRD_PARTY_NOTICES.md": "281c38b8cbe6221e1989beb480ba9d9a461a8f7228165e4e38ef50b72e2e284d"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Council"
+  short_description: "Five Luna advisors, one Sol synthesis"
+  default_prompt: "Use $council to run five independent Luna advisors and have Sol verify their evidence and synthesize one practical recommendation."
