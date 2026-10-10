@@ -4,7 +4,7 @@ Use the matching recipe to shape the council output. Keep advisor comments short
 
 Every recipe inherits the runtime contract in `../SKILL.md`: five independent advisors using the entrypoint's role-pinned GPT-6.1 Sol, GPT-6 Astra, and GPT-6 Luna profiles at max reasoning with the runtime-supported service tier described in the entrypoint must pass the five-of-five completion gate before GPT-6.1 Sol at max reasoning performs verification and synthesis. A recipe changes content emphasis only; it never weakens, replaces, or simulates that runtime contract.
 
-Every recipe also retains the entrypoint's separate process status, evidence confidence, and unresolved claims, plus the parent synthesis-fidelity check. Outputs below are content guides: adapt optional counts to the task, allow fewer useful alternatives and `None found`/`Not applicable` with reasons, and never invent disagreement or weak examples to fill a quota. Keep internal evidence focused on decision-driving claims.
+Every recipe also retains the entrypoint's separate process status, evidence confidence, unresolved claims, visible Creative Astra proposal with adoption/hold/rejection reasons, and the parent synthesis-fidelity check. A held Creative proposal includes its resolving test/evidence; no useful distinct proposal is reported honestly rather than invented. Outputs below are content guides: adapt optional counts to the task, allow fewer useful alternatives and `None found`/`Not applicable` with reasons, and never invent disagreement or weak examples to fill a quota. Keep internal evidence focused on decision-driving claims.
 
 ## 1. General Council
 

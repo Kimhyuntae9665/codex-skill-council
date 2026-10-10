@@ -2,7 +2,7 @@
   "title": "Council prescribed workflow",
   "status": "proposed",
   "basis": "council/SKILL.md: frozen packet, five independent role-pinned reviews, completion gate, GPT-6.1 Sol synthesis, parent fidelity check",
-  "description": "Codex distributes a frozen task to five independent advisors, top to bottom: Strategist (GPT-6.1 Sol), Skeptic (GPT-6 Astra), Creative (GPT-6 Astra), Operator (GPT-6.1 Sol), Audience Advocate (GPT-6 Luna). Valid briefs pass the five-role gate before GPT-6.1 Sol synthesis and parent fidelity checking. This prescribed workflow is not execution or performance evidence.",
+  "description": "Codex distributes a frozen task to five independent advisors, top to bottom: Strategist (GPT-6.1 Sol), Skeptic (GPT-6 Astra), Creative (GPT-6 Astra), Operator (GPT-6.1 Sol), Audience Advocate (GPT-6 Luna). Valid briefs pass the five-role gate before GPT-6.1 Sol synthesis and parent fidelity checking. This prescribed workflow is not execution or performance evidence. Every card has a visible technology/model name and a second role line, distinguishing the Skeptic and Creative Astra agents. Creative proposals are preserved with adoption, hold, or rejection reasons in the final answer.",
   "width": 1040,
   "height": 860,
   "nodes": [
@@ -10,49 +10,57 @@
       "id": "parent",
       "asset": "codex",
       "x": 70,
-      "y": 360
+      "y": 360,
+      "role": "요청 배분"
     },
     {
       "id": "strategist",
       "asset": "sol",
       "x": 360,
-      "y": 40
+      "y": 40,
+      "role": "Strategist · 전략 검토"
     },
     {
       "id": "skeptic",
       "asset": "astra",
       "x": 360,
-      "y": 200
+      "y": 200,
+      "role": "Skeptic · 반례 검토"
     },
     {
       "id": "creative",
       "asset": "astra",
       "x": 360,
-      "y": 360
+      "y": 360,
+      "role": "Creative · 독창적 제안"
     },
     {
       "id": "operator",
       "asset": "sol",
       "x": 360,
-      "y": 520
+      "y": 520,
+      "role": "Operator · 실행 설계"
     },
     {
       "id": "audience",
       "asset": "luna",
       "x": 360,
-      "y": 680
+      "y": 680,
+      "role": "Audience · 사용자 관점"
     },
     {
       "id": "synthesis",
       "asset": "sol",
       "x": 660,
-      "y": 360
+      "y": 360,
+      "role": "종합 · 채택·보류 판단"
     },
     {
       "id": "fidelity",
       "asset": "codex",
       "x": 900,
-      "y": 360
+      "y": 360,
+      "role": "원 요청·의견 대조"
     }
   ],
   "edges": [

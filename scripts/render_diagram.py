@@ -47,7 +47,13 @@ def render() -> Path:
         mark.set('color', '#000000')
         data = base64.b64encode(ET.tostring(mark, encoding='utf-8')).decode('ascii')
         x, y = node['x'], node['y']
-        parts.append(f'<g aria-label="{esc(entry["name"])}"><rect x="{x}" y="{y}" width="100" height="100" rx="18" fill="#ffffff" stroke="#78879d" stroke-width="1.5"/><image x="{x+18}" y="{y+18}" width="64" height="64" href="data:image/svg+xml;base64,{data}"/><text x="{x+50}" y="{y+126}" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="500" fill="#e3e9f2">{esc(entry["name"])}</text></g>')
+        role = node['role']
+        if not isinstance(role, str) or not role.strip():
+            raise ValueError('Every Council diagram node needs its actual role')
+        if y + 153 > height:
+            raise ValueError('Role label extends beyond the diagram')
+        label = f'{entry["name"]}: {role}'
+        parts.append(f'<g aria-label="{esc(label)}"><rect x="{x}" y="{y}" width="100" height="100" rx="18" fill="#ffffff" stroke="#78879d" stroke-width="1.5"/><image x="{x+18}" y="{y+18}" width="64" height="64" href="data:image/svg+xml;base64,{data}"/><text x="{x+50}" y="{y+124}" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="500" fill="#e3e9f2">{esc(entry["name"])}</text><text x="{x+50}" y="{y+148}" text-anchor="middle" font-family="Malgun Gothic, Arial, sans-serif" font-size="14" font-weight="600" fill="#8fdfcf">{esc(role)}</text></g>')
     parts.append('</svg>')
     output = IMAGES / 'council-flow.svg'
     output.write_text(''.join(parts) + '\n', encoding='utf-8', newline='\n')

@@ -59,6 +59,14 @@ Advisor threads inherit the parent's sandbox, approval, network, MCP, and skill 
 
 Keep the roles non-overlapping. When research is needed, assign distinct evidence lanes or questions instead of asking all five advisors to perform the same search. Report relevant findings within each role's emphasis; do not impose quotas for counterexamples, alternatives, or disagreement. `Not applicable` or `None found`, with the reason and scope examined in the user's language, is a valid finding. Do not invent risks or weaker alternatives to fill a role.
 
+### Creative Astra Brief
+
+Give only the Creative role this additional emphasis in its self-contained prompt. Keep the assigned Astra/max profile and existing sampling settings; do not set, request, or pretend to set temperature or top_p.
+
+Explore useful departures from the familiar answer: question a material default assumption, reverse an assumption when that opens a viable option, or transfer a mechanism from another field when the analogy fits. These are exploration methods, not a quota or a requirement to disagree. Preserve hard user constraints; if an idea needs a constraint relaxed, label it conditional rather than silently changing the task. Do not invent facts, sources, gains, or novelty claims to make a suggestion look original.
+
+Under the existing `recommendation` and `key reasons` fields, summarize the useful proposal(s), what concretely differs from the conventional approach, and why that difference may matter. Under `assumptions` and `facts vs inference`, identify the changed assumption and distinguish evidence from hypotheses. Include a small, reversible test and a success/failure observation in `what would change my mind`. No new result labels or minimum idea count are required. If no useful distinct proposal is found, say `None found` with the scope and reason; do not fabricate one.
+
 ## Advisor Prompt And Result
 
 Give each advisor a self-contained prompt containing:
@@ -114,7 +122,11 @@ Give Sol the preserved user request, frozen task packet, and all five accepted b
 5. choose the recommendation that best fits the goal and constraints rather than averaging opinions;
 6. preserve important minority warnings and state what would invalidate the recommendation.
 
+Always include a visible **Creative proposal and disposition** section in the final answer, translated into the user's language. Summarize the actual Creative Astra proposal without substituting Sol's own invention, explain what differs, and give a disposition: adopted, held for validation, or rejected. Explain the reason using the goal, constraints, evidence, or feasibility; do not discard an idea merely because it is unusual or reward it merely because it is unusual. A held proposal must state what evidence or small test would resolve it. A rejected proposal still remains visible with its reason. Retain all Creative proposals that materially change the recommendation or next experiment; omit redundant variations rather than the substantive option. When Creative found none, report that honestly with its reason. If Creative never returned a valid brief, state that its opinion is unavailable and retain the appropriate failure status.
+
 For decision-driving disagreements and material minority warnings, leave a short disposition: adopted, rejected with a reason, or unresolved, with the originating role. No minimum number of disagreements is required. The parent checks the synthesis against those briefs and the original request for distorted claims, omitted material warnings, and confidence unsupported by evidence before presenting it. If correction is needed, request a focused Sol correction and record the attempt; allow at most one such correction. If synthesis fails, or a material fidelity defect remains after the permitted correction, report `Failed Council`, even after five valid briefs. Do not add a standing extra reviewer by default. This check supports traceability; it is not independent proof of accuracy.
+
+The parent's fidelity check also confirms that the Creative section preserves the actual proposal and gives its disposition and reason; for held proposals, check that the resolving test/evidence is present. Novelty alone never increases evidence confidence.
 
 For financial, legal, medical, safety-critical, technical, or current product decisions, verify current facts before answering. For financial outputs, state that the result is research support rather than personal investment advice and include invalidation and risk controls.
 
@@ -138,7 +150,7 @@ When asked to benchmark Council or expand its workflow, read [references/council
 
 ## Output Shape
 
-Keep the answer proportionate to the task. Always include the status block; recipes may add content but cannot omit it. Use the following compact default. Include the advisor table or detailed ledger when useful or requested, rather than repeating conclusions in multiple sections.
+Keep the answer proportionate to the task. Always include the status block and Creative proposal/disposition section; recipes may add content but cannot omit either. Use the following compact default. Include the advisor table or detailed ledger when useful or requested, rather than repeating conclusions in multiple sections.
 
 ```markdown
 **Conclusion**
@@ -152,6 +164,10 @@ Unresolved claims: [decision-changing unknowns, or none and why]
 [strongest evidence; material disagreements/warnings and their disposition, or none]
 
 [what would invalidate the recommendation]
+
+**Creative Proposal And Disposition**
+[Creative Astra's actual idea and what differs, or None found/unavailable with reason]
+[adopted / held for validation / rejected, and why; a held idea includes the resolving test/evidence]
 
 **Next Steps**
 [only useful next actions, with no fixed count]

@@ -1,4 +1,4 @@
 interface:
   display_name: "Council"
   short_description: "Sol, Astra, and Luna reviews; GPT-6.1 Sol synthesis"
-  default_prompt: "Use $council to run five independent role-pinned reviews with GPT-6.1 Sol, GPT-6 Astra, and GPT-6 Luna, then have GPT-6.1 Sol verify their evidence and synthesize one practical recommendation."
+  default_prompt: "Use $council for five independent role-pinned reviews and GPT-6.1 Sol synthesis. Ask Creative Astra to explore useful unconventional approaches, and show its actual proposal with adoption, hold, or rejection reasons in the final answer."

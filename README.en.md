@@ -6,7 +6,7 @@ Council is a Codex skill that gathers five independent, role-pinned GPT-6.1 Sol,
 
 ![Codex to five Sol/Astra/Luna advisors, then GPT-6.1 Sol synthesis and parent review](docs/images/council-flow.png)
 
-The image illustrates the prescribed workflow, not a measured deployment. The five advisor cards, top to bottom, represent Strategist (Sol), Skeptic (Astra), Creative (Astra), Operator (Sol), and Audience Advocate (Luna). Arrows mean task distribution and delivery of accepted results. All five valid roles are required before synthesis. The shared OpenAI family mark identifies the technologies; it is not a distinct logo for each model. [Editable SVG](docs/images/council-flow.svg), [graph](docs/images/council-flow.graph.json), and [asset provenance](docs/images/logo-assets.json) are included. Visual style follows [logo-flow-infographics](https://github.com/Kimhyuntae9665/codex-skill-logo-flow-infographics).
+The image illustrates the prescribed workflow, not a measured deployment. Each card displays its model name and a separate visible role line. The five advisor cards, top to bottom, represent Strategist (Sol), Skeptic (Astra), Creative (Astra), Operator (Sol), and Audience Advocate (Luna). Arrows mean task distribution and delivery of accepted results. All five valid roles are required before synthesis. The shared OpenAI family mark identifies the technologies; it is not a distinct logo for each model. [Editable SVG](docs/images/council-flow.svg), [graph](docs/images/council-flow.graph.json), and [asset provenance](docs/images/logo-assets.json) are included. Visual style follows [logo-flow-infographics](https://github.com/Kimhyuntae9665/codex-skill-logo-flow-infographics).
 
 ## v1.2 model assignment
 
@@ -22,6 +22,21 @@ The image illustrates the prescribed workflow, not a measured deployment. The fi
 Model IDs and max reasoning support were checked in the publishing host's Codex catalog on 2026-10-10. Sol has a 6.1 version there; Astra and Luna use the confirmed 6-series IDs above. `gpt-6.1-astra`, `gpt-6.1-luna`, and `gpt-6-terra` were not exposed. Only older `gpt-5.6-terra` was listed, so Terra is outside this updated contract. Check availability on your own account and host.
 
 Sol handles direction, execution, and synthesis; Astra examines assumptions and alternatives; Luna handles the bounded audience review. This assignment is a design choice, not a measured role-performance result. Model diversity does not establish independent errors or higher accuracy. The five-role gate, evidence-status separation, fidelity check, and retry limits remain. [Full changes](CHANGELOG.md).
+
+## Creative Astra: visible ideas and decisions
+
+Temperature and top_p remain unchanged. Only Creative receives an extra prompt to explore useful departures from familiar answers: challenge a material default, reverse an assumption when viable, or transfer an appropriate mechanism from another field. It explains what differs, the necessary assumptions, and a small reversible test. It preserves hard constraints and distinguishes evidence from hypotheses. No quota forces novelty or disagreement; `None found` with a reason is valid.
+
+The final answer always includes **Creative Astra's proposal and its disposition**: adopted, held for validation, or rejected, with a reason tied to goals, constraints, evidence, or feasibility. Held ideas include the resolving test/evidence. Material ideas stay visible even if rejected; the parent checks the synthesis against the actual Creative brief. Sol must not replace that brief with its own invention or treat novelty as proof.
+
+Illustrative output only, not an executed Council result:
+
+```text
+Creative proposal: test a narrow workflow with human review before building full automation.
+What differs: challenges the assumption that every step needs the same automation level.
+Disposition: held — evidence identifying the error-prone step is missing.
+Resolving test: compare error rates and review time on an anonymized sample.
+```
 
 ## Requirements
 
@@ -61,7 +76,7 @@ git pull --ff-only
 python3 scripts/install.py --replace --with-agents
 ```
 
-`--replace` backs up a differing skill beside its destination before replacement. It never overwrites a differing standalone agent. Compare personal agent changes manually. Omit `--with-agents` if your runtime can explicitly dispatch each assigned model/max without the profiles. A previous `agents/luna-worker.toml` is unused by this Council and preserved for other tasks. The replacement skill contains only the new Council profiles.
+`--replace` backs up a differing skill outside the skill discovery directory, under the sibling `skill-backups/` folder (normally `$CODEX_HOME/skill-backups/`). This prevents an old backup from being loaded as a second Council skill. It never overwrites a differing standalone agent. Compare personal agent changes manually. Omit `--with-agents` if your runtime can explicitly dispatch each assigned model/max without the profiles. A previous `agents/luna-worker.toml` is unused by this Council and preserved for other tasks. The replacement skill contains only the new Council profiles.
 
 ## Use
 

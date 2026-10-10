@@ -1,5 +1,24 @@
 # Changes
 
+## v1.3.0 — 2026-10-10
+
+### 한국어
+
+- Creative Astra에 가정 전환·다른 분야 원리 적용·작은 검증 실험 지침을 추가했습니다. temperature/top_p와 모델 구성은 변경하지 않습니다.
+- 최종 답변에 실제 Creative 제안과 채택·보류·기각 이유를 표시합니다. 보류한 제안에는 판단을 해결할 근거·실험을 적고 부모가 원 검토 결과와 대조합니다.
+- 제안이 없거나 검토가 실패했을 때 의견을 만들지 않고 그 상태를 표시합니다. 독창성·반례 개수는 강제하지 않습니다.
+- README 흐름도에 모델명과 짧은 에이전트 역할을 두 줄로 표시해 같은 Astra 로고의 Skeptic/Creative를 구별합니다.
+- 스킬 업데이트 백업을 검색 폴더 밖의 `skill-backups/`로 옮겨 구버전 중복 발견을 방지했습니다. 기존 개인 에이전트 설정은 계속 보호합니다.
+
+### English
+
+- Add Creative-only assumption reframing, suitable cross-domain mechanisms, and small reversible tests; do not change temperature, top_p, or model assignments.
+- Preserve the actual Creative proposal in the final answer with adoption/hold/rejection reasons and resolving tests for held ideas. The parent verifies proposal fidelity; absence/failure is reported honestly.
+- Add visible per-node role labels to the SVG/PNG flow and update both guides.
+- Keep update backups outside skill discovery under `skill-backups/`, preserving older copies without duplicate discovery.
+
+These are instruction, presentation, and installation changes. Tests do not demonstrate increased creative quality or decision accuracy.
+
 ## v1.2.0 — 2026-10-10
 
 ### 한국어

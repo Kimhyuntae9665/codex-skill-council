@@ -30,16 +30,18 @@ class InstallationTests(unittest.TestCase):
     def test_conflicting_skill_preserved_and_replace_backs_it_up(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
-            target = base / 'council'
-            target.mkdir()
+            target = base / 'skills/council'
+            target.mkdir(parents=True)
             (target / 'personal-note.txt').write_text('keep me', encoding='utf-8')
             with self.assertRaises(FileExistsError):
-                self.call(base)
+                self.call(base / 'skills')
             self.assertEqual((target / 'personal-note.txt').read_text(), 'keep me')
-            self.call(base, replace=True)
-            backup = list(base.glob('council.backup-*'))
+            self.call(base / 'skills', replace=True)
+            backup = list((base / 'skill-backups').glob('council.backup-*'))
             self.assertEqual(len(backup), 1)
             self.assertEqual((backup[0] / 'personal-note.txt').read_text(), 'keep me')
+            self.assertFalse(backup[0].is_relative_to(base / 'skills'))
+            self.assertEqual(list((base / 'skills').glob('council.backup-*')), [])
 
     def test_agent_collision_is_checked_before_skill_writes(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -78,7 +80,7 @@ class InstallationTests(unittest.TestCase):
             target = self.call(base / 'skills', replace=True, agent_dir=agents)
             self.assertFalse((target / 'assets/luna-worker.toml').exists())
             self.assertEqual((agents / 'luna-worker.toml').read_bytes(), legacy)
-            backup = next((base / 'skills').glob('council.backup-*'))
+            backup = next((base / 'skill-backups').glob('council.backup-*'))
             self.assertEqual((backup / 'assets/luna-worker.toml').read_bytes(), legacy)
             for filename in AGENT_PROFILES:
                 self.assertEqual((agents / filename).read_bytes(), (SOURCE / 'assets' / filename).read_bytes())

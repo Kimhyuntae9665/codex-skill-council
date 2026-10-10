@@ -68,8 +68,12 @@ def install(dest: Path, *, replace: bool = False, agent_dir: Path | None = None)
         shutil.copytree(SOURCE, stage)
         backup = None
         if target.exists():
-            backup = dest / f'council.backup-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:8]}'
-            if target.resolve().parent != dest or backup.parent != dest:
+            backup_dir = dest.parent / 'skill-backups'
+            if linked(backup_dir) or backup_dir.resolve().parent != dest.parent:
+                raise ValueError('Backup directory must be a direct, non-linked sibling of the skill directory')
+            backup_dir.mkdir(exist_ok=True)
+            backup = backup_dir / f'council.backup-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:8]}'
+            if target.resolve().parent != dest or backup.resolve().parent != backup_dir or backup.is_relative_to(dest):
                 raise ValueError('Replacement paths escaped destination')
             target.rename(backup)
             print(f'Backup: {backup}')
