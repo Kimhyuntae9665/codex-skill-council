@@ -1,31 +1,104 @@
 {
   "title": "Council prescribed workflow",
   "status": "proposed",
-  "basis": "council/SKILL.md: frozen packet, five independent Luna roles, completion gate, Sol synthesis, parent fidelity check",
-  "description": "The first Codex node distributes a frozen task to five Luna advisors, ordered top to bottom as Strategist, Skeptic, Creative, Operator and Audience Advocate. Valid briefs pass the five-role gate before reaching Sol. Sol synthesizes and the final Codex node checks fidelity to the original request and briefs. This is an instruction-defined workflow, not execution or performance evidence.",
+  "basis": "council/SKILL.md: frozen packet, five independent role-pinned reviews, completion gate, GPT-6.1 Sol synthesis, parent fidelity check",
+  "description": "Codex distributes a frozen task to five independent advisors, top to bottom: Strategist (GPT-6.1 Sol), Skeptic (GPT-6 Astra), Creative (GPT-6 Astra), Operator (GPT-6.1 Sol), Audience Advocate (GPT-6 Luna). Valid briefs pass the five-role gate before GPT-6.1 Sol synthesis and parent fidelity checking. This prescribed workflow is not execution or performance evidence.",
   "width": 1040,
   "height": 860,
   "nodes": [
-    {"id": "parent", "asset": "codex", "x": 70, "y": 360},
-    {"id": "strategist", "asset": "luna", "x": 360, "y": 40},
-    {"id": "skeptic", "asset": "luna", "x": 360, "y": 200},
-    {"id": "creative", "asset": "luna", "x": 360, "y": 360},
-    {"id": "operator", "asset": "luna", "x": 360, "y": 520},
-    {"id": "audience", "asset": "luna", "x": 360, "y": 680},
-    {"id": "synthesis", "asset": "sol", "x": 660, "y": 360},
-    {"id": "fidelity", "asset": "codex", "x": 900, "y": 360}
+    {
+      "id": "parent",
+      "asset": "codex",
+      "x": 70,
+      "y": 360
+    },
+    {
+      "id": "strategist",
+      "asset": "sol",
+      "x": 360,
+      "y": 40
+    },
+    {
+      "id": "skeptic",
+      "asset": "astra",
+      "x": 360,
+      "y": 200
+    },
+    {
+      "id": "creative",
+      "asset": "astra",
+      "x": 360,
+      "y": 360
+    },
+    {
+      "id": "operator",
+      "asset": "sol",
+      "x": 360,
+      "y": 520
+    },
+    {
+      "id": "audience",
+      "asset": "luna",
+      "x": 360,
+      "y": 680
+    },
+    {
+      "id": "synthesis",
+      "asset": "sol",
+      "x": 660,
+      "y": 360
+    },
+    {
+      "id": "fidelity",
+      "asset": "codex",
+      "x": 900,
+      "y": 360
+    }
   ],
   "edges": [
-    {"source": "parent", "target": "strategist"},
-    {"source": "parent", "target": "skeptic"},
-    {"source": "parent", "target": "creative"},
-    {"source": "parent", "target": "operator"},
-    {"source": "parent", "target": "audience"},
-    {"source": "strategist", "target": "synthesis"},
-    {"source": "skeptic", "target": "synthesis"},
-    {"source": "creative", "target": "synthesis"},
-    {"source": "operator", "target": "synthesis"},
-    {"source": "audience", "target": "synthesis"},
-    {"source": "synthesis", "target": "fidelity"}
+    {
+      "source": "parent",
+      "target": "strategist"
+    },
+    {
+      "source": "parent",
+      "target": "skeptic"
+    },
+    {
+      "source": "parent",
+      "target": "creative"
+    },
+    {
+      "source": "parent",
+      "target": "operator"
+    },
+    {
+      "source": "parent",
+      "target": "audience"
+    },
+    {
+      "source": "strategist",
+      "target": "synthesis"
+    },
+    {
+      "source": "skeptic",
+      "target": "synthesis"
+    },
+    {
+      "source": "creative",
+      "target": "synthesis"
+    },
+    {
+      "source": "operator",
+      "target": "synthesis"
+    },
+    {
+      "source": "audience",
+      "target": "synthesis"
+    },
+    {
+      "source": "synthesis",
+      "target": "fidelity"
+    }
   ]
 }

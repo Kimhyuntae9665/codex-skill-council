@@ -49,15 +49,23 @@ def validate(root: Path) -> None:
     entry = (root / 'council/SKILL.md').read_text(encoding='utf-8')
     if not entry.startswith('---\nname: council\n'):
         raise ValueError('Council skill frontmatter missing')
-    profile = tomllib.loads((root / 'council/assets/luna-worker.toml').read_text(encoding='utf-8'))
-    if profile.get('name') != 'luna_worker' or profile.get('model') != 'gpt-5.6-luna' or profile.get('model_reasoning_effort') != 'max':
-        raise ValueError('Luna profile does not match the fixed contract')
+    profiles = {
+        'council-sol.toml': ('council_sol', 'gpt-6.1-sol'),
+        'council-astra.toml': ('council_astra', 'gpt-6-astra'),
+        'council-luna.toml': ('council_luna', 'gpt-6-luna'),
+    }
+    if {p.name for p in (root / 'council/assets').glob('*.toml')} != set(profiles):
+        raise ValueError('Council agent profile inventory differs')
+    for filename, (name, model) in profiles.items():
+        profile = tomllib.loads((root / 'council/assets' / filename).read_text(encoding='utf-8'))
+        if profile.get('name') != name or profile.get('model') != model or profile.get('model_reasoning_effort') != 'max':
+            raise ValueError(f'Council profile does not match the fixed contract: {filename}')
     asset = root / 'docs/images/assets/openai.svg'
     assets = json.loads((root / 'docs/images/logo-assets.json').read_text(encoding='utf-8'))
     for record in assets.values():
         if hashlib.sha256(asset.read_bytes()).hexdigest() != record['sha256']:
             raise ValueError('Logo asset hash differs from provenance')
-    print(f'Package verified: {len(actual)} files, hashes, local links, JSON/TOML/SVG, Luna profile.')
+    print(f'Package verified: {len(actual)} files, hashes, local links, JSON/TOML/SVG, three Council model profiles.')
     print('This check does not execute models or prove decision quality.')
 
 

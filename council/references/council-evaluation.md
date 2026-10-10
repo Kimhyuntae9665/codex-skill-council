@@ -1,10 +1,10 @@
 # Council Evaluation
 
-Read when benchmarking Council or deciding whether to add more structure or modes. Do not run this protocol during every Council request. Preserve the full five-Luna/max plus Sol/max contract in the Council condition; proposed alternatives are separate explicitly named experiments.
+Read when benchmarking Council or deciding whether to add more structure or modes. Do not run this protocol during every Council request. Preserve the full five-role model assignment plus GPT-6.1 Sol/max synthesis contract in the Council condition; proposed alternatives are separate explicitly named experiments.
 
 ## Start Small
 
-Implement separate process/evidence reporting and minimal records first. Then compare current Council against single `gpt-5.6-sol` at `max` on a small frozen case set. Use results to choose targeted changes, rather than adding every proposed mechanism first. Do not require JSON, role-output quotas, or a complete claim-ID ledger for this initial comparison.
+Implement separate process/evidence reporting and minimal records first. Treat v1.1 (five GPT-5.6 Luna reviewers and GPT-5.6 Sol synthesis) and v1.2 (the mixed-model assignment) as different conditions; do not transfer old scores to the new contract. Then compare current Council against single `gpt-6.1-sol` at `max` on a small frozen case set. Use results to choose targeted changes, rather than adding every proposed mechanism first. Do not require JSON, role-output quotas, or a complete claim-ID ledger for this initial comparison.
 
 Include conflicting sources, ambiguous goals, false premises, missing decisive information, and a plan constrained by resources or reversibility. Start with a few representative cases; a fixed run count is not evidence of statistical significance. Freeze the cases and scoring rules before reading the answers.
 

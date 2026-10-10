@@ -1,4 +1,4 @@
 interface:
   display_name: "Council"
-  short_description: "Five Luna advisors, one Sol synthesis"
-  default_prompt: "Use $council to run five independent Luna advisors and have Sol verify their evidence and synthesize one practical recommendation."
+  short_description: "Sol, Astra, and Luna reviews; GPT-6.1 Sol synthesis"
+  default_prompt: "Use $council to run five independent role-pinned reviews with GPT-6.1 Sol, GPT-6 Astra, and GPT-6 Luna, then have GPT-6.1 Sol verify their evidence and synthesize one practical recommendation."

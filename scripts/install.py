@@ -12,9 +12,15 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'council'
+AGENT_PROFILES = {
+    'council-sol.toml': 'council_sol',
+    'council-astra.toml': 'council_astra',
+    'council-luna.toml': 'council_luna',
+}
 REQUIRED = (
-    'SKILL.md', 'agents/openai.yaml', 'assets/luna-worker.toml',
+    'SKILL.md', 'agents/openai.yaml',
     'references/council-recipes.md', 'references/council-evaluation.md',
+    *(f'assets/{name}' for name in AGENT_PROFILES),
 )
 
 
@@ -29,20 +35,23 @@ def install(dest: Path, *, replace: bool = False, agent_dir: Path | None = None)
     target = dest / 'council'
     if linked(target) or target.resolve().parent != dest:
         raise ValueError('Council target must be a direct, non-linked child of the destination')
-    agent_target = None
+    agent_targets = []
     if agent_dir is not None:
         agent_dir = agent_dir.expanduser().resolve()
-        agent_target = agent_dir / 'luna-worker.toml'
-        if linked(agent_target):
-            raise ValueError('Refusing a linked agent destination')
+        for filename, name in AGENT_PROFILES.items():
+            agent_target = agent_dir / filename
+            if linked(agent_target):
+                raise ValueError(f'Refusing a linked agent destination: {agent_target}')
+            if agent_target.exists() and agent_target.read_bytes() != (SOURCE / 'assets' / filename).read_bytes():
+                raise FileExistsError(f'Agent file exists: {agent_target}; it will not be overwritten')
+            agent_targets.append(agent_target)
         for existing in agent_dir.glob('*.toml'):
             profile = tomllib.loads(existing.read_text(encoding='utf-8'))
-            if profile.get('name') == 'luna_worker':
-                if existing == agent_target and existing.read_bytes() == (SOURCE / 'assets/luna-worker.toml').read_bytes():
-                    continue
-                raise FileExistsError(f'luna_worker already exists: {existing}; compare it manually')
-        if agent_target.exists() and agent_target.read_bytes() != (SOURCE / 'assets/luna-worker.toml').read_bytes():
-            raise FileExistsError(f'Agent file exists: {agent_target}; it will not be overwritten')
+            for filename, name in AGENT_PROFILES.items():
+                if profile.get('name') == name:
+                    if existing == agent_dir / filename and existing.read_bytes() == (SOURCE / 'assets' / filename).read_bytes():
+                        continue
+                    raise FileExistsError(f'{name} already exists: {existing}; compare it manually')
 
     identical = target.is_dir() and {
         p.relative_to(target).as_posix(): p.read_bytes()
@@ -73,10 +82,10 @@ def install(dest: Path, *, replace: bool = False, agent_dir: Path | None = None)
     for name in REQUIRED:
         if (target / name).read_bytes() != (SOURCE / name).read_bytes():
             raise ValueError(f'Installed file mismatch: {name}')
-    if agent_target is not None:
+    for agent_target in agent_targets:
         agent_target.parent.mkdir(parents=True, exist_ok=True)
         if not agent_target.exists():
-            shutil.copy2(SOURCE / 'assets/luna-worker.toml', agent_target)
+            shutil.copy2(SOURCE / 'assets' / agent_target.name, agent_target)
         print(f'Agent profile: {agent_target}')
     print(f'Council installed and verified: {target}')
     print('Open a fresh Codex chat and invoke $council. Model access is not granted by installation.')
@@ -89,11 +98,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dest', type=Path, default=codex_home / 'skills', help='Parent skill directory')
     parser.add_argument('--replace', action='store_true', help='Back up a differing Council before updating')
-    parser.add_argument('--with-agent', action='store_true', help='Also install the standalone Luna profile')
+    parser.add_argument('--with-agents', '--with-agent', dest='with_agents', action='store_true', help='Also install all three Council model profiles (--with-agent is a compatible alias)')
     parser.add_argument('--agent-dir', type=Path, default=codex_home / 'agents')
     args = parser.parse_args()
     try:
-        install(args.dest, replace=args.replace, agent_dir=args.agent_dir if args.with_agent else None)
+        install(args.dest, replace=args.replace, agent_dir=args.agent_dir if args.with_agents else None)
     except (ValueError, OSError, tomllib.TOMLDecodeError) as exc:
         print(f'Installation stopped: {exc}', file=sys.stderr)
         return 1

@@ -6,7 +6,7 @@
 
 SHA-256: `a41e8e53b14ef686319ed1529066d6a3391aca77d7f6eaaa9f0783acc717375f`.
 
-OpenAI names and marks belong to OpenAI. The mark identifies OpenAI technologies used in the prescribed workflow; it is not this project's own branding and does not imply an official partnership, sponsorship or endorsement. The same family symbol is reused for Codex, GPT-5.6 Luna and GPT-5.6 Sol; separate model logos are not claimed.
+OpenAI names and marks belong to OpenAI. The mark identifies OpenAI technologies used in the prescribed workflow; it is not this project's own branding and does not imply an official partnership, sponsorship or endorsement. The same family symbol is reused for Codex, GPT-6.1 Sol, GPT-6 Astra and GPT-6 Luna; separate model logos are not claimed.
 
 The original asset bytes are preserved. In SVG/PNG exports, explicit intrinsic size and black `currentColor` resolution are used for renderer compatibility; path geometry and aspect ratio are unchanged. See the [OpenAI brand guidelines and usage terms](https://openai.com/brand/). The project's MIT license does not grant rights to OpenAI trademarks.
 

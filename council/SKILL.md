@@ -1,6 +1,6 @@
 ---
 name: council
-description: Run a model-pinned Council with five independent GPT-5.6 Luna advisors at max reasoning and GPT-5.6 Sol at max reasoning for evidence-aware synthesis. Use for complex or consequential decisions, option comparisons, plans, and reviews where distinct perspectives could change the recommendation. Separate execution completion from evidence confidence.
+description: Run five independent Council reviews with role-pinned GPT-6.1 Sol, GPT-6 Astra, and GPT-6 Luna at max reasoning, followed by GPT-6.1 Sol synthesis. Use for complex or consequential decisions, comparisons, plans, and reviews where distinct perspectives could change the recommendation. Separate execution completion from evidence confidence.
 ---
 
 # Council
@@ -9,7 +9,22 @@ Produce a practical answer only after a strict five-advisor review. The council 
 
 ## When To Use
 
-Recommend Council when the stakes, difficulty of reversal, conflicting evidence, or competing interests make multiple perspectives useful. Routine edits and simple fact lookups are not default uses. An explicit request to run `$council` still uses the full contract below; never silently reduce the advisor count or replace the models. Same-model advisors provide separate information flows, not guaranteed independence of errors. Quality gains over a single model remain unverified without comparative evidence.
+Recommend Council when the stakes, difficulty of reversal, conflicting evidence, or competing interests make multiple perspectives useful. Routine edits and simple fact lookups are not default uses. An explicit request to run `$council` still uses the full contract below; never silently reduce the advisor count or replace the models. Separate information flows and different model profiles do not guarantee independent errors; all advisors still share the packet and may share training or sources. Quality gains over a single model remain unverified without comparative evidence.
+
+## Model Assignment
+
+The v1.2 contract uses these exact profiles. The three optional TOML assets provide reusable agent types; each role still needs its own fresh thread.
+
+| Role | Model ID | Reasoning | Optional agent type |
+|---|---|---|---|
+| Strategist | `gpt-6.1-sol` | `max` | `council_sol` |
+| Skeptic | `gpt-6-astra` | `max` | `council_astra` |
+| Creative | `gpt-6-astra` | `max` | `council_astra` |
+| Operator | `gpt-6.1-sol` | `max` | `council_sol` |
+| Audience Advocate | `gpt-6-luna` | `max` | `council_luna` |
+| Synthesizer | `gpt-6.1-sol` | `max` | `council_sol` |
+
+Use Sol for direction, execution, and synthesis; Astra for assumption challenges and alternative framing; Luna for a bounded audience-focused review. This is a design choice, not measured proof of role superiority. These IDs and `max` support were checked in the publishing host's Codex catalog on 2026-10-10; verify access in the executing host before dispatch. Do not invent `gpt-6.1-luna`, `gpt-6.1-astra`, or `gpt-6-terra` aliases. The catalog exposed only older `gpt-5.6-terra`, which is not part of this updated contract.
 
 ## Task Packet Check
 
@@ -22,15 +37,15 @@ Every advisor may challenge the packet's framing and should record a material co
 For every explicit `$council` invocation:
 
 1. Freeze one task packet containing the user request, goal, constraints, known evidence, as-of date when relevant, and authorization boundaries.
-2. Dispatch exactly five fresh advisor threads. Use the `luna_worker` agent type when available, or an equivalent explicitly pinned profile with:
-   - model: `gpt-5.6-luna`
+2. Dispatch exactly five fresh advisor threads with the role-specific model from the Model Assignment table. Use the matching installed `council_*` agent type when its exposed configuration matches, or a generic agent with an explicit model override. Do not use a fixed legacy `luna_worker` profile that would ignore the requested model. With `spawn_agent`, use `fork_turns: "none"` when selecting a model or reasoning override. Pin:
+   - model: the exact ID assigned to that role above
    - reasoning effort: `max`
    - service tier: prefer `fast` only when the dispatch API explicitly supports it. Otherwise use the supported default or inherited tier; do not send unsupported parameters. Record the exposed tier (for example `priority`) or `not exposed` in the runtime ledger. Do not infer an actual tier from a requested tier or describe an inherited tier as verified fast service.
 3. Give every advisor the same frozen task packet plus only its role-specific emphasis. Do not fork the full conversation, reveal another advisor's output, or let advisors debate each other.
 4. Wait for all five terminal results. If the runtime cannot run five advisors concurrently, run them in waves without changing their prompts or sharing earlier results. Choose task-appropriate advisor and overall deadlines before dispatch. Record role, attempt ID, start/end time, terminal state, and available usage; record unavailable token or cost data as unknown.
 5. Each failed role may be retried at most once with the same role and runtime profile. Confirm the previous attempt has ended or been cancelled before redispatch. Dispatch errors, timeouts, and malformed briefs share this per-role retry budget; do not add unlimited format-repair attempts or silently restart the whole Council to evade the budget. Select one valid terminal brief per role, log all attempts, and exclude late duplicate results from the gate. If any unique role still lacks a valid result, report `Failed Council`; do not silently simulate, substitute another model, or present a partial run as a full council.
-6. After the five-of-five completion gate passes, synthesize with `gpt-5.6-sol` at `max` reasoning. Use the parent when it is already pinned to that profile; otherwise spawn a dedicated Sol synthesizer when the runtime supports explicit model selection.
-7. If Luna/max or Sol/max is unavailable, state the missing model or reasoning capability and stop the full Council workflow instead of weakening the contract silently. A missing service-tier selector does not block Council when the model and reasoning profiles are available; disclose this runtime limitation.
+6. After the five-of-five completion gate passes, synthesize with `gpt-6.1-sol` at `max` reasoning. Use the parent only when its exposed configuration confirms that exact model and effort; otherwise spawn a dedicated Sol synthesizer when the runtime supports explicit model selection, with no inherited conversation and the self-contained synthesis packet. A parent running GPT-6 Sol or GPT-5.6 Sol does not satisfy the GPT-6.1 Sol requirement.
+7. If any assigned model/max profile is unavailable, state the missing model or reasoning capability and stop the full Council workflow instead of weakening the contract silently. A missing service-tier selector does not block Council when the model and reasoning profiles are available; disclose this runtime limitation.
 
 Advisor threads inherit the parent's sandbox, approval, network, MCP, and skill access. Do not request broader permissions merely to improve an opinion. Keep advisory work read-only unless the original user request explicitly authorizes a scoped mutation and the parent assigns it.
 
@@ -79,7 +94,7 @@ Before Sol synthesis, confirm:
 
 - exactly five unique roles each have one accepted valid terminal brief from their own fresh advisor thread; failed or superseded attempts are logged separately;
 - every required role appears exactly once;
-- every advisor used the Luna/max profile, and its requested or inherited service tier is recorded without claiming an unverified actual tier;
+- every advisor used its role's exact Model Assignment profile at max reasoning, and its requested or inherited service tier is recorded without claiming an unverified actual tier;
 - no advisor received a peer's output before finishing;
 - every result follows the required schema and records data limits;
 - material claims have evidence or are explicitly labeled as inference.
@@ -115,7 +130,7 @@ A complete process can legitimately have low evidence confidence and a withheld 
 
 ## Recipes
 
-Read `references/council-recipes.md` when the request matches a reusable prompt type. A recipe shapes the content only; it never changes the five-Luna completion gate or the Sol synthesis contract.
+Read `references/council-recipes.md` when the request matches a reusable prompt type. A recipe shapes the content only; it never changes the five-role model assignment, completion gate, or GPT-6.1 Sol synthesis contract.
 
 ## Evaluate Before Expanding
 
@@ -142,7 +157,7 @@ Unresolved claims: [decision-changing unknowns, or none and why]
 [only useful next actions, with no fixed count]
 
 **Runtime Ledger**
-[compact summary: five accepted roles, Sol profile, fidelity check, retries, elapsed time, available usage, and limits; retain attempt details for inspection]
+[compact summary: five accepted roles with each model/effort, GPT-6.1 Sol synthesis profile, fidelity check, retries, elapsed time, available usage, and limits; retain attempt details for inspection]
 ```
 
 ## Quality Rules
