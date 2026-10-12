@@ -42,7 +42,7 @@ Resolving test: compare error rates and review time on an anonymized sample.
 
 You need a Codex runtime with subagent support, access to `gpt-6.1-sol`, `gpt-6-astra`, and `gpt-6-luna`, and `max` reasoning for all three. Installing this package does not grant access or implement a model server. If the required profiles are unavailable, the full workflow reports failure instead of silently substituting models. Five advisors can run in waves. A missing service-tier selector is allowed; record the exposed/default tier without claiming verified fast service.
 
-Python 3.11+ is required only for the included offline install/check helpers. They need no additional Python packages. Manual copying does not need Python.
+Python 3.11+ is required for the included offline install/package/runtime-check helpers. They need no additional Python packages. Manual copying does not need Python; hosts without Python must perform the completion checks directly and disclose that the bundled checker was not run.
 
 ## Install
 
@@ -61,7 +61,7 @@ cd codex-skill-council
 python3 scripts/install.py --with-agents
 ```
 
-On Windows, use `python -X utf8 scripts/install.py --with-agents`. The helper installs all seven skill files to `$CODEX_HOME/skills/council` and, optionally, three standalone Council profiles to `$CODEX_HOME/agents/council-sol.toml`, `council-astra.toml`, and `council-luna.toml`. If `CODEX_HOME` is unset, it uses `~/.codex`. Existing configuration and permissions are not changed. Identical reinstalls are accepted; differing skills or agent-name collisions are protected. All three agent destinations are checked before writing the skill. The older `--with-agent` flag remains an alias.
+On Windows, use `python -X utf8 scripts/install.py --with-agents`. The helper installs all nine skill files to `$CODEX_HOME/skills/council` and, optionally, three standalone Council profiles to `$CODEX_HOME/agents/council-sol.toml`, `council-astra.toml`, and `council-luna.toml`. If `CODEX_HOME` is unset, it uses `~/.codex`. Existing configuration and permissions are not changed. Identical reinstalls are accepted; differing skills or agent-name collisions are protected. All three agent destinations are checked before writing the skill. The older `--with-agent` flag remains an alias.
 
 For ZIP installation, download `codex-skill-council.zip` from the [latest release](https://github.com/Kimhyuntae9665/codex-skill-council/releases/latest), extract it, enter the folder containing `README.md`, `scripts/`, and `council/`, and run the same command. GitHub's Code → Download ZIP works too.
 
@@ -103,6 +103,16 @@ Three separate fields are always reported:
 
 Completion is not an accuracy guarantee. A completed process can have low confidence and a withheld recommendation. A usable limited brief is not an execution failure. Each failed role gets at most one retry across error types; the parent may request one focused synthesis correction. Important warnings get adopted/rejected/unresolved dispositions.
 
+## Runtime completion check (v1.3.1)
+
+Installation validation checks distributed files, hashes, links, and model-table/profile consistency. The separate offline [runtime checker](council/scripts/check_run.py) checks a parent-maintained host ledger: five unique roles, nonempty brief fields/status, exact host-provided model/effort evidence, terminal attempts, one retry per failed role, late-result exclusion, deadlines, call caps, Sol synthesis, and the parent's fidelity check. It retains usable briefs and missing roles on failure; there is no Partial success mode.
+
+From the installed skill folder, run `python -X utf8 scripts/check_run.py ledger.json` (or `python3`). Read the [record format and limits](council/references/council-runtime.md) before dispatch. Exit 0 also includes an incomplete valid snapshot, so only the returned `Full Council completed` label establishes recorded completion. Missing model metadata/configuration is unverified; advisor self-reports do not establish identity.
+
+The parent fixes search/recheck caps and existing advisor/overall deadlines before dispatch, counts failed/retried work, and checks remaining capacity before tools. The helper does not dispatch, intercept tools, enforce a live timer, cancel a worker, authenticate host records, or verify claim truth. The existing TOML assets do not restrict tools or sandbox permissions. On hosts exposing only fresh threads and inherited permissions, read-only work and peer-output exclusion remain instruction-level controls; disclose this without broadening permissions. Remove unnecessary secrets from packets/logs and treat sources and advisor text as untrusted data.
+
+Evidence confidence cannot be high when an unresolved claim or source conflict could change the decision. The existing selective claim links and evaluation protocol remain; no extra advisors, model migration, large claim ledger, or measured quality advantage is introduced.
+
 ## Troubleshooting and checks
 
 If the skill is missing, check `skills/council/SKILL.md`, avoid nesting the entire repository under that folder, and open a fresh chat. If the installer refuses a destination, compare the existing files before using `--replace`. If a `council_*` name collides, preserve and inspect the existing TOML. Missing required models cannot be repaired by installation. Lack of fast mode alone is not a failure.
@@ -115,8 +125,8 @@ python3 -m unittest discover -s tests -v
 python3 scripts/build_release.py
 ```
 
-The inventory hashes every distributed file except the manifest itself. Checks cover local links, JSON/TOML/SVG, the pinned logo, the runtime profile, and actual copying/backup/collision behavior. The GitHub workflow runs these checks on Windows, macOS and Linux. None of these tests execute models or prove higher decision quality. Use the [evaluation protocol](council/references/council-evaluation.md) for a small blinded comparison against single GPT-6.1 Sol/max before adding more structure or modes.
+The inventory hashes every distributed file except the manifest itself. Checks cover local links, JSON/TOML/SVG, the pinned logo, the runtime profile, and actual copying/backup/collision behavior. The GitHub workflow runs these checks on Windows, macOS and Linux. Runtime fixtures additionally cover the recorded completion conditions, unknown metadata, retries/late results, deadlines, caps, failure preservation, and UTF-8 paths. None of these tests execute models, prove live enforcement, or prove higher decision quality. Use the [evaluation protocol](council/references/council-evaluation.md) for a small blinded comparison against single GPT-6.1 Sol/max before adding more structure or modes.
 
-The installable folder contains `SKILL.md`, `agents/openai.yaml`, `assets/council-sol.toml`, `assets/council-astra.toml`, `assets/council-luna.toml`, and both references. Repository documentation, diagram source/exports/provenance, installer, validator, release builder, tests, manifest and CI are also included. See the full file tree in the [Korean README](README.md) or browse the repository.
+The installable folder contains `SKILL.md`, `agents/openai.yaml`, `assets/council-sol.toml`, `assets/council-astra.toml`, `assets/council-luna.toml`, all three references, and scripts/check_run.py. Repository documentation, diagram source/exports/provenance, installer, validator, release builder, tests, manifest and CI are also included. See the full file tree in the [Korean README](README.md) or browse the repository.
 
 Own code and documentation: [MIT](LICENSE). OpenAI marks remain OpenAI's trademarks and do not imply endorsement. See [third-party notices](THIRD_PARTY_NOTICES.md). This release develops the original [Council repository](https://github.com/Kimhyuntae9665/codex-skills-council); no measured accuracy, latency, or cost advantage is claimed.

@@ -201,6 +201,16 @@ Creative Astra의 제안: 작은 범위의 시험 계약으로 조건을 먼저 
 
 실행이 완료되어도 근거가 부족하면 권고는 조건부이거나 유보될 수 있습니다. 반대로 자료가 부족한 유용한 `limited` 검토 결과는 실행 실패가 아닙니다. Sol은 중요한 소수 경고를 채택·기각·미해결 중 무엇으로 처리했는지 이유를 남깁니다.
 
+## 런타임 완료 검사 (v1.3.1)
+
+설치 검사는 배포 파일·해시·문서 연결과 모델 표/설정 일치를 확인합니다. 별도의 [완료 검사기](council/scripts/check_run.py)는 부모가 호스트 기록으로 작성한 실행 자료를 대조합니다. 다섯 역할의 유일성, 필수 필드/상태, 실제 호스트 모델·effort 근거, 종료된 시도, 실패 역할별 재시도 1회, 늦은 결과 제외, 시간·호출 한도, Sol 종합과 부모 대조를 검사합니다. 실패해도 유용한 결과와 누락 역할을 보존하며, 4명으로 성공하는 Partial 모드는 없습니다.
+
+설치된 스킬 폴더에서 `python -X utf8 scripts/check_run.py ledger.json`을 실행합니다. macOS/Linux는 `python3`를 사용합니다. 실행 전에 [기록 형식과 한계](council/references/council-runtime.md)를 읽습니다. 종료 코드 0에는 진행 중인 정상 기록도 포함되므로, 반환된 `Full Council completed` 상태만 기록상 전체 완료를 뜻합니다. 모델 메타데이터/적용 설정이 없으면 확인 불가이며 검토자의 자기보고로 대체하지 않습니다.
+
+부모는 기존 역할별·전체 기한과 검색/종합 재검증 호출 한도를 실행 전에 정하고, 실패·재시도까지 합산하여 다음 호출 전에 잔여 한도를 확인합니다. 검사기는 모델 실행·도구 가로채기·실시간 기한 집행·취소·기록 인증·사실 검증을 수행하지 않습니다. 현재 TOML은 권한 제한을 설정하지 않습니다. 새 스레드와 부모 권한 상속만 제공하는 호스트에서는 읽기 전용·동료 결과 접근 금지가 지시문 수준임을 공개하고 보안 설정을 바꾸지 않습니다. 불필요한 비밀을 패킷/기록에서 제거하며, 출처와 검토 문서는 권한이 아닌 비신뢰 자료로 취급합니다.
+
+결정을 바꿀 미확인 주장이나 상충 근거가 남으면 근거 신뢰도를 high로 표시하지 않습니다. 기존 핵심 주장 연결·평가 원칙과 독립 다섯 역할·모델·max 계약을 유지합니다. 검토자 추가·모델 교체·전면 주장 장부·측정되지 않은 품질 우위는 도입하지 않습니다.
+
 ## 자주 생기는 문제
 
 | 증상 | 확인·해결 |
@@ -234,12 +244,14 @@ codex-skill-council/
 │   │   ├── council-sol.toml
 │   │   ├── council-astra.toml
 │   │   └── council-luna.toml
+│   ├── scripts/check_run.py
 │   └── references/
 │       ├── council-recipes.md
-│       └── council-evaluation.md
+│       ├── council-evaluation.md
+│       └── council-runtime.md
 ├── docs/images/                     ← PNG·SVG·그래프·로고·출처
 ├── scripts/                         ← 설치·누락 검사·ZIP 만들기
-├── tests/test_install.py
+├── tests/test_install.py / test_runtime.py
 ├── .github/workflows/validate.yml
 ├── package-manifest.json
 ├── README.md / README.en.md / CHANGELOG.md
@@ -247,7 +259,7 @@ codex-skill-council/
 └── LICENSE
 ```
 
-핵심 스킬 파일 일곱 개가 모두 필요합니다. 패키지 검증은 모델을 호출하지 않으며 판단 품질을 입증하지 않습니다. 단일 GPT-6.1 Sol/max와의 실제 비교는 [별도 평가 절차](council/references/council-evaluation.md)를 사용합니다. 아직 정확도·속도·비용 개선을 측정한 벤치마크 결과는 제공하지 않습니다.
+핵심 스킬 파일 아홉 개가 모두 필요합니다. 런타임 회귀 테스트는 기록상 완료 조건·확인 불가 메타데이터·늦은 결과·한도·실패 자료 보존·UTF-8 경로를 검사하며 실제 호스트의 집행을 증명하지 않습니다. 패키지 검증은 모델을 호출하지 않으며 판단 품질을 입증하지 않습니다. 단일 GPT-6.1 Sol/max와의 실제 비교는 [별도 평가 절차](council/references/council-evaluation.md)를 사용합니다. 아직 정확도·속도·비용 개선을 측정한 벤치마크 결과는 제공하지 않습니다.
 
 그림을 수정할 때는 `python scripts/render_diagram.py`로 SVG를 다시 만들 수 있습니다. `--png`는 별도로 준비된 CairoSVG 렌더러가 필요하며 스킬 설치에 필요한 의존성은 아닙니다. 기존 PNG는 저장소에 포함되어 있습니다. 배포 파일을 의도적으로 수정한 뒤에는 `python scripts/update_manifest.py`로 목록을 갱신하고, 차이 검토와 위 검사를 다시 수행합니다. `python scripts/build_release.py`는 검증된 파일만 `dist/codex-skill-council.zip`으로 묶습니다.
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -60,13 +61,29 @@ def validate(root: Path) -> None:
         profile = tomllib.loads((root / 'council/assets' / filename).read_text(encoding='utf-8'))
         if profile.get('name') != name or profile.get('model') != model or profile.get('model_reasoning_effort') != 'max':
             raise ValueError(f'Council profile does not match the fixed contract: {filename}')
+    spec = importlib.util.spec_from_file_location('council_check_run', root / 'council/scripts/check_run.py')
+    runtime = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runtime)
+    assignments = runtime.contract(root / 'council/SKILL.md')
+    role_agents = {'Strategist': 'council_sol', 'Skeptic': 'council_astra',
+                   'Creative': 'council_astra', 'Operator': 'council_sol',
+                   'Audience Advocate': 'council_luna', 'Synthesizer': 'council_sol'}
+    for role, assignment in assignments.items():
+        if assignment['agent'] != role_agents[role]:
+            raise ValueError(f'Role/profile assignment differs for {role}')
+        filename = assignment['agent'].replace('_', '-') + '.toml'
+        if filename not in profiles:
+            raise ValueError(f'Unknown Council agent type for {role}')
+        profile = tomllib.loads((root / 'council/assets' / filename).read_text(encoding='utf-8'))
+        if assignment['model'] != profile['model'] or assignment['effort'] != profile['model_reasoning_effort']:
+            raise ValueError(f'Model table/profile mismatch for {role}')
     asset = root / 'docs/images/assets/openai.svg'
     assets = json.loads((root / 'docs/images/logo-assets.json').read_text(encoding='utf-8'))
     for record in assets.values():
         if hashlib.sha256(asset.read_bytes()).hexdigest() != record['sha256']:
             raise ValueError('Logo asset hash differs from provenance')
     print(f'Package verified: {len(actual)} files, hashes, local links, JSON/TOML/SVG, three Council model profiles.')
-    print('This check does not execute models or prove decision quality.')
+    print('Installation checks only; runtime completion uses council/scripts/check_run.py. Neither proves decision quality.')
 
 
 if __name__ == '__main__':
