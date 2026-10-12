@@ -1,5 +1,23 @@
 # Changes
 
+## v1.3.1 — 2026-10-12
+
+### 한국어
+
+- 기존 독립 5역할, Sol/Astra/Luna 배치, max, 5/5 완료 계약을 유지하면서 작은 오프라인 런타임 완료 검사기를 추가했습니다.
+- 호스트 기록/적용 설정에 근거한 모델·effort 확인, 필수 필드·상태, 역할/시도 중복, 종료 확인, 재시도·교정 한도, 늦은 결과, 역할별·전체 기한, 검색/검증 호출 한도를 검사합니다. 자기보고나 요청값을 실제 실행 근거로 간주하지 않습니다.
+- 실패 시 유용한 결과·누락 역할·시도 기록을 보존하며 Partial 성공 모드는 추가하지 않습니다. 설치 검사와 런타임 검사를 분리하고 모델 표/설정의 불일치도 검사합니다.
+- 읽기 전용/동료 격리의 지시문 수준 한계와 기록 신뢰 경계를 공개하고, 민감정보 최소화·비신뢰 자료 취급·간단한 근거 신뢰도 기준을 보완했습니다. 보안 설정은 변경하지 않습니다.
+- 정상·오류·확인 불가·재시도·늦은 결과·시간/호출 한도·실패 자료 보존·UTF-8 경로 회귀 테스트를 기존 설치 테스트와 세 OS CI에 연결했습니다.
+
+### English
+
+- Add an offline host-ledger completion checker without changing the independent five-role/model/max contract.
+- Check provenance, fields/status, unique attempts, confirmed termination, bounded retries/corrections, late results, deadlines, call caps, synthesis and parent fidelity. Retain failure evidence; never label four roles as Full.
+- Extend package table/profile consistency checks and existing installation/three-OS tests. Document instruction-level sandbox/isolation limits and simple confidence criteria.
+
+Fixture and installation checks do not establish live enforcement, model quality, or measured accuracy/latency/cost gains. The existing blinded evaluation protocol is unchanged; no model benchmark is run by these helpers.
+
 ## v1.3.0 — 2026-10-10
 
 ### 한국어

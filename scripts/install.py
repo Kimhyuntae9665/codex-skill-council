@@ -20,12 +20,20 @@ AGENT_PROFILES = {
 REQUIRED = (
     'SKILL.md', 'agents/openai.yaml',
     'references/council-recipes.md', 'references/council-evaluation.md',
+    'references/council-runtime.md', 'scripts/check_run.py',
     *(f'assets/{name}' for name in AGENT_PROFILES),
 )
 
 
 def linked(path: Path) -> bool:
     return path.is_symlink() or getattr(path, 'is_junction', lambda: False)()
+
+
+def skill_contents(path: Path) -> dict:
+    return {p.relative_to(path).as_posix(): p.read_bytes()
+            for p in path.rglob('*') if p.is_file()
+            and '__pycache__' not in p.relative_to(path).parts
+            and p.suffix not in {'.pyc', '.pyo'}}
 
 
 def install(dest: Path, *, replace: bool = False, agent_dir: Path | None = None) -> Path:
@@ -53,19 +61,13 @@ def install(dest: Path, *, replace: bool = False, agent_dir: Path | None = None)
                         continue
                     raise FileExistsError(f'{name} already exists: {existing}; compare it manually')
 
-    identical = target.is_dir() and {
-        p.relative_to(target).as_posix(): p.read_bytes()
-        for p in target.rglob('*') if p.is_file()
-    } == {
-        p.relative_to(SOURCE).as_posix(): p.read_bytes()
-        for p in SOURCE.rglob('*') if p.is_file()
-    }
+    identical = target.is_dir() and skill_contents(target) == skill_contents(SOURCE)
     if target.exists() and not identical and not replace:
         raise FileExistsError(f'{target} already exists. Review it or use --replace to keep a backup and update')
     if not identical:
         dest.mkdir(parents=True, exist_ok=True)
         stage = dest / f'.council-stage-{uuid.uuid4().hex[:8]}'
-        shutil.copytree(SOURCE, stage)
+        shutil.copytree(SOURCE, stage, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '*.pyo'))
         backup = None
         if target.exists():
             backup_dir = dest.parent / 'skill-backups'

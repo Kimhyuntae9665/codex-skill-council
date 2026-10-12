@@ -1,5 +1,7 @@
 import contextlib
 import io
+import hashlib
+import json
 from pathlib import Path
 import shutil
 import sys
@@ -20,7 +22,9 @@ class InstallationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
             target = self.call(base / 'skills', agent_dir=base / 'agents')
-            expected = {p.relative_to(SOURCE): p.read_bytes() for p in SOURCE.rglob('*') if p.is_file()}
+            manifest = json.loads((ROOT / 'package-manifest.json').read_text(encoding='utf-8'))
+            expected = {Path(name).relative_to('council'): (ROOT / name).read_bytes()
+                        for name in manifest['files'] if name.startswith('council/')}
             actual = {p.relative_to(target): p.read_bytes() for p in target.rglob('*') if p.is_file()}
             self.assertEqual(expected, actual)
             self.assertEqual({p.name for p in (base / 'agents').glob('*.toml')}, set(AGENT_PROFILES))
@@ -107,6 +111,17 @@ class InstallationTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             validate(ROOT)
 
+    def test_runtime_cache_does_not_trigger_replacement(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            target = self.call(base / 'skills')
+            self.assertFalse((target / 'scripts/__pycache__').exists())
+            cache = target / 'scripts/__pycache__'
+            cache.mkdir()
+            (cache / 'check_run.pyc').write_bytes(b'local runtime cache')
+            self.call(base / 'skills')
+            self.assertFalse((base / 'skill-backups').exists())
+
     def test_missing_evaluation_reference_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             package = Path(temp) / 'package'
@@ -114,6 +129,25 @@ class InstallationTests(unittest.TestCase):
             (package / 'council/references/council-evaluation.md').unlink()
             with self.assertRaisesRegex(ValueError, 'Inventory differs'):
                 validate(package)
+
+    def test_table_profile_drift_is_rejected_even_with_fresh_manifest(self):
+        for change in ('model', 'role'):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as temp:
+                package = Path(temp) / 'package'
+                shutil.copytree(ROOT, package, ignore=shutil.ignore_patterns('.git', '__pycache__', 'dist'))
+                path = package / 'council/SKILL.md'
+                text = path.read_text(encoding='utf-8')
+                if change == 'model':
+                    text = text.replace('| Strategist | `gpt-6.1-sol`', '| Strategist | `gpt-6-luna`')
+                else:
+                    text = text.replace('| Strategist |', '| Skeptic |')
+                path.write_text(text, encoding='utf-8')
+                manifest = package / 'package-manifest.json'
+                data = json.loads(manifest.read_text(encoding='utf-8'))
+                data['files']['council/SKILL.md'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                manifest.write_text(json.dumps(data), encoding='utf-8')
+                with self.assertRaisesRegex(ValueError, 'Model table/profile mismatch|five unique roles'):
+                    validate(package)
 
 
 if __name__ == '__main__':
